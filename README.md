@@ -139,10 +139,10 @@ theme-toggle {
 
 | Name | Description |
 | ---- | ----------- |
-| `base` | The theme toggle button. |
-| `icon` | The default theme icon. |
-| `icon-light` | The default light theme icon. |
-| `icon-dark`  | The default dark theme icon. |
+| `base` | The base element of the component. |
+| `icon` | The theme icon. |
+| `icon--light` | The light theme icon. |
+| `icon--dark` | The dark theme icon. |
 
 ### CSS Custom Properties
 

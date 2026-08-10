@@ -61,7 +61,7 @@ const styles = css`
     display: none !important;
   }
 
-  .button {
+  .theme-toggle {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -77,26 +77,26 @@ const styles = css`
     line-height: 0;
   }
 
-  .button:disabled {
+  .theme-toggle:disabled {
     cursor: not-allowed;
   }
 
-  .button:not(:disabled) {
+  .theme-toggle:not(:disabled) {
     cursor: pointer;
   }
 
   @media (hover: hover) {
-    .button:not(:disabled):hover {
+    .theme-toggle:not(:disabled):hover {
       background-color: var(--theme-toggle-background-hover-color);
     }
   }
 
-  .button:focus-visible {
+  .theme-toggle:focus-visible {
     outline: var(--theme-toggle-focus-ring-width) solid var(--theme-toggle-focus-ring-color);
     outline-offset: var(--theme-toggle-focus-ring-offset);
   }
 
-  .button svg {
+  .theme-toggle__icon {
     width: 1em;
     height: 1em;
   }
@@ -110,10 +110,11 @@ template.innerHTML = html`
     ${styles}
   </style>
 
-  <button type="button" part="base" id="theme-toggle" class="button" aria-label="Switch to dark theme">
+  <button type="button" part="base" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark theme">
     <slot name="icon-light">
       <svg
-        part="icon icon-light"
+        part="icon icon--light"
+        class="theme-toggle__icon theme-toggle__icon--light"
         viewBox="0 0 24 24"
         width="1em"
         height="1em"
@@ -138,7 +139,8 @@ template.innerHTML = html`
 
     <slot name="icon-dark" class="hidden">
       <svg
-        part="icon icon-dark"
+        part="icon icon--dark"
+        class="theme-toggle__icon theme-toggle__icon--dark"
         viewBox="0 0 24 24"
         width="1em"
         height="1em"
@@ -176,10 +178,10 @@ template.innerHTML = html`
  * @slot icon-light - Custom icon for the light theme.
  * @slot icon-dark - Custom icon for the dark theme.
  *
- * @csspart base - The toggle button.
+ * @csspart base - The base element of the component.
  * @csspart icon - The theme icon.
- * @csspart icon-light - The light theme icon.
- * @csspart icon-dark - The dark theme icon.
+ * @csspart icon--light - The light theme icon.
+ * @csspart icon--dark - The dark theme icon.
  *
  * @cssproperty --theme-toggle-size - The width and height of the toggle button.
  * @cssproperty --theme-toggle-padding - The padding of the toggle button.

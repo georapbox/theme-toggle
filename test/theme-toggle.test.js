@@ -28,8 +28,7 @@ describe('theme-toggle', () => {
 
     window.matchMedia = () => mediaQueryList;
 
-    window.localStorage.removeItem(DEFAULT_STORAGE_KEY);
-    window.localStorage.removeItem('STORAGE_KEY');
+    window.localStorage.clear();
     document.documentElement.removeAttribute('data-theme');
   });
 
@@ -38,12 +37,11 @@ describe('theme-toggle', () => {
 
     window.matchMedia = originalMatchMedia;
 
-    window.localStorage.removeItem(DEFAULT_STORAGE_KEY);
-    window.localStorage.removeItem('STORAGE_KEY');
+    window.localStorage.clear();
     document.documentElement.removeAttribute('data-theme');
   });
 
-  describe('Accessibility', () => {
+  describe('accessibility', () => {
     it('passes accessibility test', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
       await expect(el).to.be.accessible();
@@ -107,7 +105,7 @@ describe('theme-toggle', () => {
     });
   });
 
-  describe('Slots', () => {
+  describe('slots', () => {
     // Light
     it('has "icon-light" slot', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
@@ -143,20 +141,39 @@ describe('theme-toggle', () => {
     });
   });
 
-  describe('Events', () => {
+  describe('CSS Parts', () => {
+    it('should have base part', async () => {
+      const el = await fixture(html`<theme-toggle></theme-toggle>`);
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
+      expect(baseElement.part.contains('base')).to.be.true;
+    });
+
+    it('each icon should have a part', async () => {
+      const el = await fixture(html`<theme-toggle></theme-toggle>`);
+      const lightIcon = el.shadowRoot.querySelector('.theme-toggle__icon--light');
+      const darkIcon = el.shadowRoot.querySelector('.theme-toggle__icon--dark');
+
+      expect(lightIcon.part.contains('icon')).to.be.true;
+      expect(lightIcon.part.contains('icon--light')).to.be.true;
+      expect(darkIcon.part.contains('icon')).to.be.true;
+      expect(darkIcon.part.contains('icon--dark')).to.be.true;
+    });
+  });
+
+  describe('events', () => {
     it('"theme-change" event is fired when clicking the toggle button', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
 
       const listener1 = oneEvent(el, 'theme-change');
-      button.click(); // dark
+      baseElement.click(); // dark
       expect((await listener1).detail).to.deep.equal({
         theme: 'dark',
         resolvedTheme: 'dark'
       });
 
       const listener2 = oneEvent(el, 'theme-change');
-      button.click(); // back to system (light)
+      baseElement.click(); // back to system (light)
       expect((await listener2).detail).to.deep.equal({
         theme: 'system',
         resolvedTheme: 'light'
@@ -164,27 +181,27 @@ describe('theme-toggle', () => {
     });
   });
 
-  describe('Basic functionality', () => {
+  describe('basic functionality', () => {
     it("changes the button's icon visibility and accessible label on click", async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
       const lightIconSlot = el.shadowRoot.querySelector('slot[name="icon-light"]');
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
 
       // system resolves to light
       expect(lightIconSlot).not.to.have.class('hidden');
       expect(darkIconSlot).to.have.class('hidden');
-      expect(button).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
 
-      button.click(); // dark
+      baseElement.click(); // dark
       expect(lightIconSlot).to.have.class('hidden');
       expect(darkIconSlot).not.to.have.class('hidden');
-      expect(button).to.have.attribute('aria-label', 'Switch to light theme');
+      expect(baseElement).to.have.attribute('aria-label', 'Switch to light theme');
 
-      button.click(); // back to system (light)
+      baseElement.click(); // back to system (light)
       expect(lightIconSlot).not.to.have.class('hidden');
       expect(darkIconSlot).to.have.class('hidden');
-      expect(button).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
     });
 
     it('adds "data-theme" attribute to root element of document', async () => {
@@ -194,51 +211,51 @@ describe('theme-toggle', () => {
 
     it('"data-theme" attribute on root element changes when clicking the toggle button', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
 
       expect(document.documentElement).to.have.attribute('data-theme', 'system');
 
-      button.click(); // dark
+      baseElement.click(); // dark
       expect(document.documentElement).to.have.attribute('data-theme', 'dark');
 
-      button.click(); // back to system (light)
+      baseElement.click(); // back to system (light)
       expect(document.documentElement).to.have.attribute('data-theme', 'system');
     });
 
     it('persists an explicit theme preference in local storage', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
 
       expect(window.localStorage.getItem(DEFAULT_STORAGE_KEY)).to.be.null;
 
-      button.click(); // dark
+      baseElement.click(); // dark
       expect(window.localStorage.getItem(DEFAULT_STORAGE_KEY)).to.equal('dark');
 
-      button.click(); // back to system (light)
+      baseElement.click(); // back to system (light)
       expect(window.localStorage.getItem(DEFAULT_STORAGE_KEY)).to.be.null;
     });
 
     it('does not persist the theme when "no-storage" is enabled', async () => {
       const el = await fixture(html`<theme-toggle no-storage></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
 
-      button.click(); // dark
+      baseElement.click(); // dark
       expect(window.localStorage.getItem(DEFAULT_STORAGE_KEY)).to.be.null;
 
-      button.click(); // back to system (light)
+      baseElement.click(); // back to system (light)
       expect(window.localStorage.getItem(DEFAULT_STORAGE_KEY)).to.be.null;
     });
 
     it('follows system theme changes when using the system preference', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      const button = el.shadowRoot.getElementById('theme-toggle');
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
       const lightIconSlot = el.shadowRoot.querySelector('slot[name="icon-light"]');
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
 
       expect(document.documentElement).to.have.attribute('data-theme', 'system');
       expect(lightIconSlot).not.to.have.class('hidden');
       expect(darkIconSlot).to.have.class('hidden');
-      expect(button).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
 
       prefersDark = true;
       mediaQueryList.dispatchEvent(new Event('change'));
@@ -246,7 +263,7 @@ describe('theme-toggle', () => {
       expect(document.documentElement).to.have.attribute('data-theme', 'system');
       expect(lightIconSlot).to.have.class('hidden');
       expect(darkIconSlot).not.to.have.class('hidden');
-      expect(button).to.have.attribute('aria-label', 'Switch to light theme');
+      expect(baseElement).to.have.attribute('aria-label', 'Switch to light theme');
     });
 
     it('keeps multiple instances in sync', async () => {
