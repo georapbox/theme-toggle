@@ -15,6 +15,7 @@ describe('theme-toggle upgrading', () => {
     el.storageKey = 'STORAGE_KEY';
     el.lightLabel = 'LIGHT_LABEL';
     el.darkLabel = 'DARK_LABEL';
+    el.disabled = true;
 
     // Define and explicitly upgrade the custom element
     ThemeToggle.define();
@@ -29,5 +30,6 @@ describe('theme-toggle upgrading', () => {
     expect(el.getAttribute('storage-key')).to.equal('STORAGE_KEY');
     expect(el.getAttribute('light-label')).to.equal('LIGHT_LABEL');
     expect(el.getAttribute('dark-label')).to.equal('DARK_LABEL');
+    expect(el.hasAttribute('disabled')).to.be.true;
   });
 });

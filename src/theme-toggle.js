@@ -78,6 +78,7 @@ const styles = css`
   }
 
   .theme-toggle:disabled {
+    opacity: 0.75;
     cursor: not-allowed;
   }
 
@@ -99,6 +100,11 @@ const styles = css`
   .theme-toggle__icon {
     width: 1em;
     height: 1em;
+  }
+
+  .theme-toggle__icon,
+  .theme-toggle ::slotted(svg) {
+    flex-shrink: 0;
   }
 `;
 
@@ -169,11 +175,13 @@ template.innerHTML = html`
  * @property {string} storageKey - The local storage key used to persist the selected theme.
  * @property {string} lightLabel - The accessible label for switching to the light theme.
  * @property {string} darkLabel - The accessible label for switching to the dark theme.
+ * @property {boolean} disabled - Whether the toggle button is disabled.
  *
  * @attribute {boolean} no-storage - Whether to disable persistence of the selected theme.
  * @attribute {string} storage-key - The local storage key used to persist the selected theme.
  * @attribute {string} light-label - The accessible label for switching to the light theme.
  * @attribute {string} dark-label - The accessible label for switching to the dark theme.
+ * @attribute {boolean} disabled - Whether the toggle button is disabled.
  *
  * @slot icon-light - Custom icon for the light theme.
  * @slot icon-dark - Custom icon for the dark theme.
@@ -220,7 +228,7 @@ class ThemeToggle extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['storage-key', 'light-label', 'dark-label'];
+    return ['storage-key', 'light-label', 'dark-label', 'disabled'];
   }
 
   /**
@@ -242,6 +250,10 @@ class ThemeToggle extends HTMLElement {
 
     if (name === 'light-label' || name === 'dark-label') {
       this.#reflectThemePreference();
+    }
+
+    if (name === 'disabled') {
+      this.#reflectDisabledState();
     }
   }
 
@@ -323,6 +335,21 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
+   * Whether the toggle button is disabled.
+   *
+   * @type {boolean}
+   * @default false
+   * @attribute disabled
+   */
+  get disabled() {
+    return this.hasAttribute('disabled');
+  }
+
+  set disabled(value) {
+    this.toggleAttribute('disabled', !!value);
+  }
+
+  /**
    * Lifecycle method called when the element is connected to the DOM.
    */
   connectedCallback() {
@@ -330,6 +357,7 @@ class ThemeToggle extends HTMLElement {
     this.#upgradeProperty('storageKey');
     this.#upgradeProperty('lightLabel');
     this.#upgradeProperty('darkLabel');
+    this.#upgradeProperty('disabled');
 
     this.#toggleButton = this.shadowRoot?.querySelector('#theme-toggle') || null;
 
@@ -337,6 +365,7 @@ class ThemeToggle extends HTMLElement {
 
     this.#theme = this.#getThemePreference();
     this.#reflectThemePreference();
+    this.#reflectDisabledState();
 
     this.#toggleButton?.addEventListener('click', this.#handleToggleClick);
     this.#colorSchemeMediaQuery.addEventListener('change', this.#handleMediaChange);
@@ -476,6 +505,16 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
+   * Reflects the disabled state of the toggle button based on the `disabled` property.
+   */
+  #reflectDisabledState() {
+    if (!this.#toggleButton) {
+      return;
+    }
+    this.#toggleButton.disabled = this.disabled;
+  }
+
+  /**
    * Toggles the effective theme.
    *
    * If the new theme matches the current system preference, the explicit
@@ -550,7 +589,7 @@ class ThemeToggle extends HTMLElement {
    *
    * @see https://web.dev/articles/custom-elements-best-practices#make_properties_lazy
    *
-   * @param {'noStorage' | 'storageKey' | 'lightLabel' | 'darkLabel'} prop - The property name to upgrade.
+   * @param {'noStorage' | 'storageKey' | 'lightLabel' | 'darkLabel' | 'disabled'} prop - The property name to upgrade.
    */
   #upgradeProperty(prop) {
     const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);

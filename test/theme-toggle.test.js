@@ -1,4 +1,4 @@
-import { elementUpdated, expect, fixture, fixtureCleanup, html, oneEvent } from '@open-wc/testing';
+import { expect, fixture, fixtureCleanup, html, oneEvent } from '@open-wc/testing';
 import { ThemeToggle } from '../src/theme-toggle.js';
 
 ThemeToggle.define();
@@ -49,59 +49,73 @@ describe('theme-toggle', () => {
   });
 
   describe('attributes - properties', () => {
-    // no-storage
-    it('reflects attribute "no-storage" to property "noStorage"', async () => {
-      const el = await fixture(html`<theme-toggle no-storage></theme-toggle>`);
-      expect(el.noStorage).to.be.true;
+    describe('noStorage', () => {
+      it('reflects attribute no-storage to property noStorage', async () => {
+        const el = await fixture(html`<theme-toggle no-storage></theme-toggle>`);
+        expect(el.noStorage).to.be.true;
+      });
+
+      it('reflects property noStorage to attribute no-storage', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.noStorage = true;
+        expect(el.hasAttribute('no-storage')).to.be.true;
+        el.noStorage = false;
+        expect(el.hasAttribute('no-storage')).to.be.false;
+      });
     });
 
-    it('reflects property "noStorage" to attribute "no-storage"', async () => {
-      const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      el.noStorage = true;
-      await elementUpdated(el);
-      expect(el).to.have.attribute('no-storage');
-      el.noStorage = false;
-      await elementUpdated(el);
-      expect(el).not.to.have.attribute('no-storage');
+    describe('storageKey', () => {
+      it('reflects attribute storage-key to property storageKey', async () => {
+        const el = await fixture(html`<theme-toggle storage-key="STORAGE_KEY"></theme-toggle>`);
+        expect(el.storageKey).to.equal('STORAGE_KEY');
+      });
+
+      it('reflects property storageKey to attribute storage-key', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.storageKey = 'STORAGE_KEY';
+        expect(el.getAttribute('storage-key')).to.equal('STORAGE_KEY');
+      });
     });
 
-    // storage-key
-    it('reflects attribute "storage-key" to property "storageKey"', async () => {
-      const el = await fixture(html`<theme-toggle storage-key="STORAGE_KEY"></theme-toggle>`);
-      expect(el.storageKey).to.equal('STORAGE_KEY');
+    describe('lightLabel', () => {
+      it('reflects attribute light-label to property lightLabel', async () => {
+        const el = await fixture(html`<theme-toggle light-label="LIGHT"></theme-toggle>`);
+        expect(el.lightLabel).to.equal('LIGHT');
+      });
+
+      it('reflects property lightLabel to attribute light-label', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.lightLabel = 'LIGHT';
+        expect(el.getAttribute('light-label')).to.equal('LIGHT');
+      });
     });
 
-    it('reflects property "storageKey" to attribute "storage-key"', async () => {
-      const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      el.storageKey = 'STORAGE_KEY';
-      await elementUpdated(el);
-      expect(el).to.have.attribute('storage-key', 'STORAGE_KEY');
+    describe('darkLabel', () => {
+      it('reflects attribute dark-label to property darkLabel', async () => {
+        const el = await fixture(html`<theme-toggle dark-label="DARK"></theme-toggle>`);
+        expect(el.darkLabel).to.equal('DARK');
+      });
+
+      it('reflects property darkLabel to attribute dark-label', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.darkLabel = 'DARK';
+        expect(el.getAttribute('dark-label')).to.equal('DARK');
+      });
     });
 
-    // light-label
-    it('reflects attribute "light-label" to property "lightLabel"', async () => {
-      const el = await fixture(html`<theme-toggle light-label="LIGHT"></theme-toggle>`);
-      expect(el.lightLabel).to.equal('LIGHT');
-    });
+    describe('disabled', () => {
+      it('reflects attribute disabled to property disabled', async () => {
+        const el = await fixture(html`<theme-toggle disabled></theme-toggle>`);
+        expect(el.disabled).to.be.true;
+      });
 
-    it('reflects property "lightLabel" to attribute "light-label"', async () => {
-      const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      el.lightLabel = 'LIGHT';
-      await elementUpdated(el);
-      expect(el).to.have.attribute('light-label', 'LIGHT');
-    });
-
-    // dark-label
-    it('reflects attribute "dark-label" to property "darkLabel"', async () => {
-      const el = await fixture(html`<theme-toggle dark-label="DARK"></theme-toggle>`);
-      expect(el.darkLabel).to.equal('DARK');
-    });
-
-    it('reflects property "darkLabel" to attribute "dark-label"', async () => {
-      const el = await fixture(html`<theme-toggle></theme-toggle>`);
-      el.darkLabel = 'DARK';
-      await elementUpdated(el);
-      expect(el).to.have.attribute('dark-label', 'DARK');
+      it('reflects property disabled to attribute disabled', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.disabled = true;
+        expect(el.hasAttribute('disabled')).to.be.true;
+        el.disabled = false;
+        expect(el.hasAttribute('disabled')).to.be.false;
+      });
     });
   });
 
@@ -189,37 +203,37 @@ describe('theme-toggle', () => {
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
 
       // system resolves to light
-      expect(lightIconSlot).not.to.have.class('hidden');
-      expect(darkIconSlot).to.have.class('hidden');
-      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
 
       baseElement.click(); // dark
-      expect(lightIconSlot).to.have.class('hidden');
-      expect(darkIconSlot).not.to.have.class('hidden');
-      expect(baseElement).to.have.attribute('aria-label', 'Switch to light theme');
+      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
 
       baseElement.click(); // back to system (light)
-      expect(lightIconSlot).not.to.have.class('hidden');
-      expect(darkIconSlot).to.have.class('hidden');
-      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
     });
 
     it('adds "data-theme" attribute to root element of document', async () => {
       await fixture(html`<theme-toggle></theme-toggle>`);
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
     });
 
     it('"data-theme" attribute on root element changes when clicking the toggle button', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
       const baseElement = el.shadowRoot.getElementById('theme-toggle');
 
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
 
       baseElement.click(); // dark
-      expect(document.documentElement).to.have.attribute('data-theme', 'dark');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('dark');
 
       baseElement.click(); // back to system (light)
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
     });
 
     it('persists an explicit theme preference in local storage', async () => {
@@ -252,18 +266,18 @@ describe('theme-toggle', () => {
       const lightIconSlot = el.shadowRoot.querySelector('slot[name="icon-light"]');
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
 
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
-      expect(lightIconSlot).not.to.have.class('hidden');
-      expect(darkIconSlot).to.have.class('hidden');
-      expect(baseElement).to.have.attribute('aria-label', 'Switch to dark theme');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
+      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
 
       prefersDark = true;
       mediaQueryList.dispatchEvent(new Event('change'));
 
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
-      expect(lightIconSlot).to.have.class('hidden');
-      expect(darkIconSlot).not.to.have.class('hidden');
-      expect(baseElement).to.have.attribute('aria-label', 'Switch to light theme');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
+      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
     });
 
     it('keeps multiple instances in sync', async () => {
@@ -283,17 +297,17 @@ describe('theme-toggle', () => {
 
       firstButton.click(); // dark
 
-      expect(secondLightIconSlot).to.have.class('hidden');
-      expect(secondDarkIconSlot).not.to.have.class('hidden');
-      expect(secondButton).to.have.attribute('aria-label', 'Switch to light theme');
-      expect(document.documentElement).to.have.attribute('data-theme', 'dark');
+      expect(secondLightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.false;
+      expect(secondButton.getAttribute('aria-label')).to.equal('Switch to light theme');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('dark');
 
       firstButton.click(); // back to system (light)
 
-      expect(secondLightIconSlot).not.to.have.class('hidden');
-      expect(secondDarkIconSlot).to.have.class('hidden');
-      expect(secondButton).to.have.attribute('aria-label', 'Switch to dark theme');
-      expect(document.documentElement).to.have.attribute('data-theme', 'system');
+      expect(secondLightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(secondButton.getAttribute('aria-label')).to.equal('Switch to dark theme');
+      expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
     });
   });
 });

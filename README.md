@@ -127,6 +127,7 @@ theme-toggle {
 | `storageKey`<br>*`storage-key`* | ✓ | `string` | - | `'theme-toggle/theme-preference'` | The local storage key used to persist the selected theme. |
 | `lightLabel`<br>*`light-label`* | ✓ | `string` | - | `'Switch to light theme'` | The accessible label for switching to the light theme. |
 | `darkLabel`<br>*`dark-label`* | ✓ | `string` | - | `'Switch to dark theme'` | The accessible label for switching to the dark theme. |
+| `disabled` | ✓ | `boolean` | - | `false` | Whether the toggle button is disabled. |
 
 ### Slots
 
