@@ -152,12 +152,8 @@ browser-window::part(title) {
 
 .theme-palette-picker input:checked + span {
   border-color: var(--palette-color);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--palette-color) 70%, transparent),
-    0 0 0.75rem color-mix(in srgb, var(--palette-color) 35%, transparent);
-  transition:
-    border-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--palette-color) 70%, transparent), 0 0 0.75rem color-mix(in srgb, var(--palette-color) 35%, transparent);
+  transition: border-color 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .theme-palette-picker input:focus-visible + span {
@@ -209,6 +205,18 @@ browser-window::part(title) {
 
 .size-control input[type='range'] {
   margin: 0;
+}
+
+.disable-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  margin-block-end: 1rem;
+}
+
+.disable-control input[type="checkbox"] {
+  margin-inline-start: 0;
 }
 
 .demo {

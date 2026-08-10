@@ -1,17 +1,25 @@
 // @ts-check
 
 /**
+ * The resolved color theme.
+ *
  * @typedef {'light' | 'dark'} Theme
  */
 
 /**
+ * The user's theme preference.
+ *
+ * `system` means the resolved theme follows the operating system preference.
+ *
  * @typedef {'light' | 'dark' | 'system'} ThemePreference
  */
 
 /**
+ * The detail payload of the `theme-change` event.
+ *
  * @typedef {object} ThemeChangeEventDetail
- * @property {ThemePreference} theme
- * @property {Theme} resolvedTheme
+ * @property {ThemePreference} theme - The current theme preference.
+ * @property {Theme} resolvedTheme - The effective light or dark theme.
  */
 
 const css = String.raw;
