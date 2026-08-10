@@ -1,0 +1,142 @@
+/*!
+ * @georapbox/theme-toggle
+ * A custom element for toggling between light and dark color themes while following the system preference by default.
+ *
+ * @version 1.0.0
+ * @homepage https://github.com/georapbox/theme-toggle#readme
+ * @author George Raptis <georapbox@gmail.com>
+ * @license MIT
+ */
+var l=String.raw,a=l`
+  :host {
+    --theme-toggle-size: 2.5rem;
+    --theme-toggle-padding: 0;
+    --theme-toggle-icon-size: 1.25rem;
+    --theme-toggle-color: #222222;
+    --theme-toggle-background-color: #f5f5f5;
+    --theme-toggle-background-hover-color: #e8e8e8;
+    --theme-toggle-border-width: 1px;
+    --theme-toggle-border-color: #d4d4d4;
+    --theme-toggle-border-radius: 50%;
+    --theme-toggle-focus-ring-width: 2px;
+    --theme-toggle-focus-ring-color: #2563eb;
+    --theme-toggle-focus-ring-offset: 2px;
+
+    display: inline-block;
+    box-sizing: border-box;
+  }
+
+  @supports (color: light-dark(#000000, #ffffff)) {
+    :host {
+      --theme-toggle-color: light-dark(#222222, #eeeeee);
+      --theme-toggle-background-color: light-dark(#f5f5f5, #262626);
+      --theme-toggle-background-hover-color: light-dark(#e8e8e8, #333333);
+      --theme-toggle-border-color: light-dark(#d4d4d4, #444444);
+      --theme-toggle-focus-ring-color: light-dark(#2563eb, #60a5fa);
+    }
+  }
+
+  :host *,
+  :host *::after,
+  :host *::before {
+    box-sizing: inherit;
+  }
+
+  :host([hidden]),
+  [hidden],
+  ::slotted([hidden]) {
+    display: none !important;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--theme-toggle-size);
+    height: var(--theme-toggle-size);
+    padding: var(--theme-toggle-padding);
+    border: var(--theme-toggle-border-width) solid var(--theme-toggle-border-color);
+    border-radius: var(--theme-toggle-border-radius);
+    background-color: var(--theme-toggle-background-color);
+    color: var(--theme-toggle-color);
+    font-family: inherit;
+    font-size: var(--theme-toggle-icon-size);
+    line-height: 0;
+  }
+
+  .button:disabled {
+    cursor: not-allowed;
+  }
+
+  .button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .button:not(:disabled):hover {
+      background-color: var(--theme-toggle-background-hover-color);
+    }
+  }
+
+  .button:focus-visible {
+    outline: var(--theme-toggle-focus-ring-width) solid var(--theme-toggle-focus-ring-color);
+    outline-offset: var(--theme-toggle-focus-ring-offset);
+  }
+
+  .button svg {
+    width: 1em;
+    height: 1em;
+  }
+`,g=String.raw,s=document.createElement("template");s.innerHTML=g`
+  <style>
+    ${a}
+  </style>
+
+  <button type="button" part="base" id="theme-toggle" class="button" aria-label="Switch to dark theme">
+    <slot name="icon-light">
+      <svg
+        part="icon icon-light"
+        viewBox="0 0 24 24"
+        width="1em"
+        height="1em"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+    </slot>
+
+    <slot name="icon-dark" class="hidden">
+      <svg
+        part="icon icon-dark"
+        viewBox="0 0 24 24"
+        width="1em"
+        height="1em"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M20.98 12.79A9 9 0 1 1 11.21 3.02 7 7 0 0 0 20.98 12.79z"></path>
+      </svg>
+    </slot>
+  </button>
+`;var i=class h extends HTMLElement{#e="system";#t=null;#r=null;constructor(){super(),this.shadowRoot||this.attachShadow({mode:"open",delegatesFocus:!0}).appendChild(s.content.cloneNode(!0))}static get observedAttributes(){return["storage-key","light-label","dark-label"]}attributeChangedCallback(e,t,o){t!==o&&(e==="storage-key"&&(this.#e=this.#n(),this.#o()),(e==="light-label"||e==="dark-label")&&this.#o())}get noStorage(){return this.hasAttribute("no-storage")}set noStorage(e){this.toggleAttribute("no-storage",!!e)}get storageKey(){return this.getAttribute("storage-key")||"theme-toggle/theme-preference"}set storageKey(e){if(e==null){this.removeAttribute("storage-key");return}this.setAttribute("storage-key",e)}get lightLabel(){return this.getAttribute("light-label")??"Switch to light theme"}set lightLabel(e){if(e==null){this.removeAttribute("light-label");return}this.setAttribute("light-label",e)}get darkLabel(){return this.getAttribute("dark-label")??"Switch to dark theme"}set darkLabel(e){if(e==null){this.removeAttribute("dark-label");return}this.setAttribute("dark-label",e)}connectedCallback(){this.#i("noStorage"),this.#i("storageKey"),this.#i("lightLabel"),this.#i("darkLabel"),this.#t=this.shadowRoot?.querySelector("#theme-toggle")||null,this.#r=window.matchMedia("(prefers-color-scheme: dark)"),this.#e=this.#n(),this.#o(),this.#t?.addEventListener("click",this.#a),this.#r.addEventListener("change",this.#g),this.ownerDocument.addEventListener("theme-change",this.#d)}disconnectedCallback(){this.#t?.removeEventListener("click",this.#a),this.#r?.removeEventListener("change",this.#g),this.ownerDocument.removeEventListener("theme-change",this.#d)}#c(e){return e==="light"||e==="dark"||e==="system"}#h(){return this.#r?.matches??window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}#s(){return this.#e==="system"?this.#h():this.#e}#n(){if(this.noStorage)return"system";try{let e=window.localStorage.getItem(this.storageKey);if(e==="light"||e==="dark")return e}catch{}return"system"}#m(){if(!this.noStorage)try{this.#e==="system"?window.localStorage.removeItem(this.storageKey):window.localStorage.setItem(this.storageKey,this.#e)}catch{}}#o(){let e=this.#s();this.#t?.querySelector('[name="icon-light"]')?.classList.toggle("hidden",e!=="light"),this.#t?.querySelector('[name="icon-dark"]')?.classList.toggle("hidden",e!=="dark"),this.#t?.setAttribute("aria-label",e==="light"?this.darkLabel:this.lightLabel),this.ownerDocument.documentElement.setAttribute("data-theme",this.#e)}#l(e,t={}){let{emit:o=!1,persist:r=!0}=t;return!this.#c(e)||e===this.#e?!1:(this.#e=e,r&&this.#m(),this.#o(),o&&this.#u("theme-change",{theme:this.#e,resolvedTheme:this.#s()}),!0)}#a=()=>{let e=this.#s(),t=this.#h(),o=e==="light"?"dark":"light",r=o===t?"system":o;this.#l(r,{emit:!0})};#g=()=>{this.#e==="system"&&this.#o()};#d=e=>{if(e.target===this||!(e instanceof CustomEvent))return;let t=e.detail?.theme;this.#l(t,{persist:!1})};#u(e,t,o){let r={bubbles:!0,composed:!0,cancelable:!1,...o,detail:t},n=new CustomEvent(e,r);return this.dispatchEvent(n)}#i(e){let t=this;if(Object.prototype.hasOwnProperty.call(t,e)){let o=t[e];delete t[e],t[e]=o}}static define(e="theme-toggle"){typeof window>"u"||window.customElements.get(e)||window.customElements.define(e,h)}};export{i as ThemeToggle};
