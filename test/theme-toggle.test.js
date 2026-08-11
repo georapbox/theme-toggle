@@ -1,4 +1,5 @@
 import { expect, fixture, fixtureCleanup, html, oneEvent } from '@open-wc/testing';
+import sinon from 'sinon';
 import { ThemeToggle } from '../src/theme-toggle.js';
 
 ThemeToggle.define();
@@ -41,14 +42,45 @@ describe('theme-toggle', () => {
     document.documentElement.removeAttribute('data-theme');
   });
 
+  describe('custom element definition', () => {
+    it('does not register the custom element more than once', () => {
+      const defineSpy = sinon.spy(window.customElements, 'define');
+      expect(() => ThemeToggle.define()).to.not.throw();
+      sinon.assert.notCalled(defineSpy);
+    });
+  });
+
   describe('accessibility', () => {
     it('passes accessibility test', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
       await expect(el).to.be.accessible();
     });
+
+    it('uses default aria-labels for theme options', async () => {
+      const el = await fixture(html`<theme-toggle></theme-toggle>`);
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
+
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
+      baseElement.click(); // dark
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
+    });
+
+    it('falls back to default aria-label for the button when lightLabel and darkLabel are not provided', async () => {
+      const el = await fixture(html`
+        <theme-toggle light-label="LIGHT_LABEL" light-label="LIGHT" dark-label="DARK"></theme-toggle>
+      `);
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
+
+      el.lightLabel = null;
+      el.darkLabel = null;
+
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
+      baseElement.click(); // dark
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
+    });
   });
 
-  describe('attributes - properties', () => {
+  describe('properties - attributes', () => {
     describe('noStorage', () => {
       it('reflects attribute no-storage to property noStorage', async () => {
         const el = await fixture(html`<theme-toggle no-storage></theme-toggle>`);
@@ -74,6 +106,20 @@ describe('theme-toggle', () => {
         const el = await fixture(html`<theme-toggle></theme-toggle>`);
         el.storageKey = 'STORAGE_KEY';
         expect(el.getAttribute('storage-key')).to.equal('STORAGE_KEY');
+      });
+
+      it('resets storageKey to the default value when the storage-key attribute is removed', async () => {
+        const el = await fixture(html`<theme-toggle storage-key="STORAGE_KEY"></theme-toggle>`);
+        expect(el.storageKey).to.equal('STORAGE_KEY');
+        el.removeAttribute('storage-key');
+        expect(el.storageKey).to.equal('theme-toggle/theme-preference');
+      });
+
+      it('resets storageKey to the default value when set to null', async () => {
+        const el = await fixture(html`<theme-toggle storage-key="STORAGE_KEY"></theme-toggle>`);
+        expect(el.storageKey).to.equal('STORAGE_KEY');
+        el.storageKey = null;
+        expect(el.storageKey).to.equal('theme-toggle/theme-preference');
       });
     });
 
