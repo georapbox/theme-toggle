@@ -207,6 +207,11 @@ browser-window::part(title) {
   margin: 0;
 }
 
+.icon-mode-control {
+  margin-block-end: 0;
+  border: 0;
+}
+
 .disable-control {
   display: flex;
   align-items: center;

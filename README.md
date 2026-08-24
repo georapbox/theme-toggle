@@ -55,7 +55,9 @@ By default, the component comes with basic styling. However, you can customise t
 
 ### How it works
 
-By default, `<theme-toggle>` uses the `system` theme and follows the user's system color preference. The system preference is resolved to either light or dark and the corresponding theme icon is displayed.
+By default, `<theme-toggle>` uses the `system` theme and follows the user's system color preference. The system preference is resolved to either light or dark.
+
+The displayed icon represents the theme that will be activated when the toggle is used. In light mode, the dark theme icon is displayed, and in dark mode, the light theme icon is displayed.
 
 When the user toggles the theme, the component sets a `data-theme` attribute on the root element of the document:
 
@@ -117,6 +119,19 @@ theme-toggle {
 }
 ```
 
+#### Icon mode
+
+By default, the displayed icon represents the target theme, meaning the theme that will be activated when the toggle is used:
+
+- In light mode, the dark theme icon is displayed.
+- In dark mode, the light theme icon is displayed.
+
+To display the icon for the currently active theme instead, set `icon-mode` to `current`:
+
+```html
+<theme-toggle icon-mode="current"></theme-toggle>
+```
+
 ## API
 
 ### Properties
@@ -127,14 +142,15 @@ theme-toggle {
 | `storageKey`<br>*`storage-key`* | ✓ | `string` | - | `'theme-toggle/theme-preference'` | The local storage key used to persist the selected theme. |
 | `lightLabel`<br>*`light-label`* | ✓ | `string` | - | `'Switch to light theme'` | The accessible label for switching to the light theme. |
 | `darkLabel`<br>*`dark-label`* | ✓ | `string` | - | `'Switch to dark theme'` | The accessible label for switching to the dark theme. |
+| `iconMode`<br>*`icon-mode`* | ✓ | `'target' \| 'current'` | - | `'target'` | Whether the displayed icon represents the target or current theme. |
 | `disabled` | ✓ | `boolean` | - | `false` | Whether the toggle button is disabled. |
 
 ### Slots
 
 | Name | Description |
 | ---- | ----------- |
-| `icon-light` | Custom icon for representing light mode. |
-| `icon-dark` | Custom icon for representing dark mode. |
+| `icon-light` | Custom icon representing the light theme. |
+| `icon-dark` | Custom icon representing the dark theme. |
 
 ### CSS Parts
 

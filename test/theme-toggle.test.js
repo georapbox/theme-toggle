@@ -149,6 +149,26 @@ describe('theme-toggle', () => {
       });
     });
 
+    describe('iconMode', () => {
+      it('reflects attribute icon-mode to property iconMode', async () => {
+        const el = await fixture(html`<theme-toggle icon-mode="current"></theme-toggle>`);
+        expect(el.iconMode).to.equal('current');
+      });
+
+      it('reflects property iconMode to attribute icon-mode', async () => {
+        const el = await fixture(html`<theme-toggle></theme-toggle>`);
+        el.iconMode = 'current';
+        expect(el.getAttribute('icon-mode')).to.equal('current');
+      });
+
+      it('resets iconMode to the default value when set to null', async () => {
+        const el = await fixture(html`<theme-toggle icon-mode="current"></theme-toggle>`);
+        expect(el.iconMode).to.equal('current');
+        el.iconMode = null;
+        expect(el.iconMode).to.equal('target');
+      });
+    });
+
     describe('disabled', () => {
       it('reflects attribute disabled to property disabled', async () => {
         const el = await fixture(html`<theme-toggle disabled></theme-toggle>`);
@@ -242,8 +262,27 @@ describe('theme-toggle', () => {
   });
 
   describe('basic functionality', () => {
-    it("changes the button's icon visibility and accessible label on click", async () => {
+    it('shows the target theme icon by default', async () => {
       const el = await fixture(html`<theme-toggle></theme-toggle>`);
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
+      const lightIconSlot = el.shadowRoot.querySelector('slot[name="icon-light"]');
+      const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
+
+      // system resolves to light
+      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
+
+      baseElement.click(); // dark
+      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+
+      baseElement.click(); // back to system (light)
+      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
+    });
+
+    it('shows the current theme icon when icon-mode is "current"', async () => {
+      const el = await fixture(html`<theme-toggle icon-mode="current"></theme-toggle>`);
       const baseElement = el.shadowRoot.getElementById('theme-toggle');
       const lightIconSlot = el.shadowRoot.querySelector('slot[name="icon-light"]');
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
@@ -251,16 +290,26 @@ describe('theme-toggle', () => {
       // system resolves to light
       expect(lightIconSlot.classList.contains('hidden')).to.be.false;
       expect(darkIconSlot.classList.contains('hidden')).to.be.true;
-      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
 
       baseElement.click(); // dark
       expect(lightIconSlot.classList.contains('hidden')).to.be.true;
       expect(darkIconSlot.classList.contains('hidden')).to.be.false;
-      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
 
       baseElement.click(); // back to system (light)
       expect(lightIconSlot.classList.contains('hidden')).to.be.false;
       expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+    });
+
+    it("changes the button's accessible label on click", async () => {
+      const el = await fixture(html`<theme-toggle></theme-toggle>`);
+      const baseElement = el.shadowRoot.getElementById('theme-toggle');
+
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
+
+      baseElement.click(); // dark
+      expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
+
+      baseElement.click(); // back to system (light)
       expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
     });
 
@@ -313,16 +362,16 @@ describe('theme-toggle', () => {
       const darkIconSlot = el.shadowRoot.querySelector('slot[name="icon-dark"]');
 
       expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
-      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
-      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
       expect(baseElement.getAttribute('aria-label')).to.equal('Switch to dark theme');
 
       prefersDark = true;
       mediaQueryList.dispatchEvent(new Event('change'));
 
       expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
-      expect(lightIconSlot.classList.contains('hidden')).to.be.true;
-      expect(darkIconSlot.classList.contains('hidden')).to.be.false;
+      expect(lightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(darkIconSlot.classList.contains('hidden')).to.be.true;
       expect(baseElement.getAttribute('aria-label')).to.equal('Switch to light theme');
     });
 
@@ -343,15 +392,15 @@ describe('theme-toggle', () => {
 
       firstButton.click(); // dark
 
-      expect(secondLightIconSlot.classList.contains('hidden')).to.be.true;
-      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.false;
+      expect(secondLightIconSlot.classList.contains('hidden')).to.be.false;
+      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.true;
       expect(secondButton.getAttribute('aria-label')).to.equal('Switch to light theme');
       expect(document.documentElement.getAttribute('data-theme')).to.equal('dark');
 
       firstButton.click(); // back to system (light)
 
-      expect(secondLightIconSlot.classList.contains('hidden')).to.be.false;
-      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.true;
+      expect(secondLightIconSlot.classList.contains('hidden')).to.be.true;
+      expect(secondDarkIconSlot.classList.contains('hidden')).to.be.false;
       expect(secondButton.getAttribute('aria-label')).to.equal('Switch to dark theme');
       expect(document.documentElement.getAttribute('data-theme')).to.equal('system');
     });
