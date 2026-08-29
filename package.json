@@ -1,6 +1,6 @@
 {
   "name": "@georapbox/theme-toggle",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A custom element for toggling between light and dark color themes while following the system preference by default.",
   "type": "module",
   "main": "dist/theme-toggle.js",
