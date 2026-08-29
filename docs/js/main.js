@@ -43,6 +43,11 @@ form.addEventListener('input', evt => {
     });
   }
 
+  if (input.name === 'icon-mode' && input.type === 'radio') {
+    themeToggles.forEach(el => (el.iconMode = input.value));
+    return;
+  }
+
   if (input.name === 'disable-control' && input.type === 'checkbox') {
     themeToggles.forEach(el => (el.disabled = input.checked));
   }

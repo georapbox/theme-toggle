@@ -15,6 +15,15 @@
  */
 
 /**
+ * How the displayed icon is determined.
+ *
+ * `target` shows the icon for the theme that will be activated.
+ * `current` shows the icon for the currently resolved theme.
+ *
+ * @typedef {'target' | 'current'} IconMode
+ */
+
+/**
  * The detail payload of the `theme-change` event.
  *
  * @typedef {object} ThemeChangeEventDetail
@@ -183,16 +192,18 @@ template.innerHTML = html`
  * @property {string} storageKey - The local storage key used to persist the selected theme.
  * @property {string} lightLabel - The accessible label for switching to the light theme.
  * @property {string} darkLabel - The accessible label for switching to the dark theme.
+ * @property {IconMode} iconMode - Whether the displayed icon represents the target or current theme.
  * @property {boolean} disabled - Whether the toggle button is disabled.
  *
  * @attribute {boolean} no-storage - Whether to disable persistence of the selected theme.
  * @attribute {string} storage-key - The local storage key used to persist the selected theme.
  * @attribute {string} light-label - The accessible label for switching to the light theme.
  * @attribute {string} dark-label - The accessible label for switching to the dark theme.
+ * @attribute {IconMode} icon-mode - Whether the displayed icon represents the target or current theme.
  * @attribute {boolean} disabled - Whether the toggle button is disabled.
  *
- * @slot icon-light - Custom icon for the light theme.
- * @slot icon-dark - Custom icon for the dark theme.
+ * @slot icon-light - Custom icon representing the light theme.
+ * @slot icon-dark - Custom icon representing the dark theme.
  *
  * @csspart base - The base element of the component.
  * @csspart icon - The theme icon.
@@ -236,7 +247,7 @@ class ThemeToggle extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['storage-key', 'light-label', 'dark-label', 'disabled'];
+    return ['storage-key', 'light-label', 'dark-label', 'icon-mode', 'disabled'];
   }
 
   /**
@@ -257,7 +268,11 @@ class ThemeToggle extends HTMLElement {
     }
 
     if (name === 'light-label' || name === 'dark-label') {
-      this.#reflectThemePreference();
+      this.#reflectAccessibleLabel(this.#getResolvedTheme());
+    }
+
+    if (name === 'icon-mode') {
+      this.#reflectIcon(this.#getResolvedTheme());
     }
 
     if (name === 'disabled') {
@@ -343,6 +358,25 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
+   * Whether the displayed icon represents the target or current theme.
+   *
+   * @type {IconMode}
+   * @default 'target'
+   * @attribute icon-mode
+   */
+  get iconMode() {
+    return this.getAttribute('icon-mode') === 'current' ? 'current' : 'target';
+  }
+
+  set iconMode(value) {
+    if (value == null) {
+      this.removeAttribute('icon-mode');
+      return;
+    }
+    this.setAttribute('icon-mode', value);
+  }
+
+  /**
    * Whether the toggle button is disabled.
    *
    * @type {boolean}
@@ -365,6 +399,7 @@ class ThemeToggle extends HTMLElement {
     this.#upgradeProperty('storageKey');
     this.#upgradeProperty('lightLabel');
     this.#upgradeProperty('darkLabel');
+    this.#upgradeProperty('iconMode');
     this.#upgradeProperty('disabled');
 
     this.#toggleButton = this.shadowRoot?.querySelector('#theme-toggle') || null;
@@ -468,15 +503,47 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
+   * Updates the displayed theme icon.
+   *
+   * @param {Theme} resolvedTheme - The effective light or dark theme.
+   */
+  #reflectIcon(resolvedTheme) {
+    const iconTheme = this.iconMode === 'target' ? (resolvedTheme === 'light' ? 'dark' : 'light') : resolvedTheme;
+
+    const lightIconSlot = this.#toggleButton?.querySelector('slot[name="icon-light"]');
+    const darkIconSlot = this.#toggleButton?.querySelector('slot[name="icon-dark"]');
+
+    lightIconSlot?.classList.toggle('hidden', iconTheme !== 'light');
+    darkIconSlot?.classList.toggle('hidden', iconTheme !== 'dark');
+  }
+
+  /**
+   * Updates the accessible label of the toggle button.
+   *
+   * @param {Theme} resolvedTheme - The effective light or dark theme.
+   */
+  #reflectAccessibleLabel(resolvedTheme) {
+    this.#toggleButton?.setAttribute('aria-label', resolvedTheme === 'light' ? this.darkLabel : this.lightLabel);
+  }
+
+  /**
+   * Reflects the disabled state of the toggle button based on the `disabled` property.
+   */
+  #reflectDisabledState() {
+    if (!this.#toggleButton) {
+      return;
+    }
+    this.#toggleButton.disabled = this.disabled;
+  }
+
+  /**
    * Updates the icon, accessible label, and root theme attribute.
    */
   #reflectThemePreference() {
     const resolvedTheme = this.#getResolvedTheme();
 
-    this.#toggleButton?.querySelector('[name="icon-light"]')?.classList.toggle('hidden', resolvedTheme !== 'light');
-    this.#toggleButton?.querySelector('[name="icon-dark"]')?.classList.toggle('hidden', resolvedTheme !== 'dark');
-    this.#toggleButton?.setAttribute('aria-label', resolvedTheme === 'light' ? this.darkLabel : this.lightLabel);
-
+    this.#reflectIcon(resolvedTheme);
+    this.#reflectAccessibleLabel(resolvedTheme);
     this.ownerDocument.documentElement.setAttribute('data-theme', this.#theme);
   }
 
@@ -510,16 +577,6 @@ class ThemeToggle extends HTMLElement {
     }
 
     return true;
-  }
-
-  /**
-   * Reflects the disabled state of the toggle button based on the `disabled` property.
-   */
-  #reflectDisabledState() {
-    if (!this.#toggleButton) {
-      return;
-    }
-    this.#toggleButton.disabled = this.disabled;
   }
 
   /**
@@ -597,7 +654,7 @@ class ThemeToggle extends HTMLElement {
    *
    * @see https://web.dev/articles/custom-elements-best-practices#make_properties_lazy
    *
-   * @param {'noStorage' | 'storageKey' | 'lightLabel' | 'darkLabel' | 'disabled'} prop - The property name to upgrade.
+   * @param {'noStorage' | 'storageKey' | 'lightLabel' | 'darkLabel' | 'iconMode' | 'disabled'} prop - The property name to upgrade.
    */
   #upgradeProperty(prop) {
     const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);
