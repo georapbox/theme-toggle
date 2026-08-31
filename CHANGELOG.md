@@ -1,11 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [2.0.0] - 2026-08-29
+## v2.0.0 (2026-08-29)
 
 ### Added
 
@@ -15,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking**: Theme icons now represent the target theme by default. Light mode displays the dark theme icon, and dark mode displays the light theme icon. This is a breaking change from `1.x`; use `icon-mode="current"` to preserve the previous behavior.
 
-## [1.0.0] - 2026-08-11
+## v1.0.0 (2026-08-11)
 
 ### Added
 
