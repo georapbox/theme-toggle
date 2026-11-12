@@ -11,49 +11,48 @@ A custom element for toggling between light and dark color themes while followin
 
 [API documentation](#api) &bull; [Demo][demo]
 
-## Usage
-
-### Installation
+## Installation
 
 ```sh
 npm install --save @georapbox/theme-toggle
 ```
 
-### Importing the component
+## Registration
 
 By default, the package exports the element class without registering it.
 This lets the application decide when the custom element is defined.
 
-#### Manual definition
+### Manual registration
+
+Import the `ThemeToggle` class and call its static `define()` method:
 
 ```js
 import { ThemeToggle } from '@georapbox/theme-toggle';
 
-// Define using the default tag name
 ThemeToggle.define();
 ```
 
-#### Auto-defined (convenience)
+### Automatic registration
 
-If you don't need control over registration, you can import the pre-defined build which immediately registers `<theme-toggle>`.
+If you don't need control over registration, import the convenience entry point:
 
 ```js
 import '@georapbox/theme-toggle/define';
 ```
 
-### Using the component in your HTML
+## Usage
 
-To use the component, simply add the `<theme-toggle>` tag to your HTML:
+Once registered, use the custom element in your HTML:
 
 ```html
 <theme-toggle></theme-toggle>
 ```
 
-### Styling the component
+## Styling
 
-By default, the component comes with basic styling. However, you can customise the styles of the various elements of the component using either [CSS Parts](#css-parts) or [CSS Custom Properties](#css-custom-properties).
+By default, the component comes with basic styling. However, you can customise the styles of the various elements of the component using either [CSS parts](#css-parts) or [CSS custom properties](#css-custom-properties).
 
-### How it works
+## How it works
 
 By default, `<theme-toggle>` uses the `system` theme and follows the user's system color preference. The system preference is resolved to either light or dark.
 
@@ -119,7 +118,7 @@ theme-toggle {
 }
 ```
 
-#### Icon mode
+### Icon mode
 
 By default, the displayed icon represents the target theme, meaning the theme that will be activated when the toggle is used:
 
@@ -134,16 +133,18 @@ To display the icon for the currently active theme instead, set `icon-mode` to `
 
 ## API
 
-### Properties
+### Properties and attributes
 
-| Name | Reflects | Type | Required | Default | Description |
-| ---- | -------- | ---- | -------- | ------- | ----------- |
-| `noStorage`<br>*`no-storage`* | ✓ | `boolean` | - | `false` | Whether to disable persistence of the selected theme in local storage. |
-| `storageKey`<br>*`storage-key`* | ✓ | `string` | - | `'theme-toggle/theme-preference'` | The local storage key used to persist the selected theme. |
-| `lightLabel`<br>*`light-label`* | ✓ | `string` | - | `'Switch to light theme'` | The accessible label for switching to the light theme. |
-| `darkLabel`<br>*`dark-label`* | ✓ | `string` | - | `'Switch to dark theme'` | The accessible label for switching to the dark theme. |
-| `iconMode`<br>*`icon-mode`* | ✓ | `'target' \| 'current'` | - | `'target'` | Whether the displayed icon represents the target or current theme. |
-| `disabled` | ✓ | `boolean` | - | `false` | Whether the toggle button is disabled. |
+| Property / Attribute | Type | Default | Description |
+| -------------------- | ---- | ------- | ----------- |
+| `noStorage` / `no-storage` | `boolean` | `false` | Disables persistence of the selected theme in local storage. |
+| `storageKey` / `storage-key` | `string` | `'theme-toggle/theme-preference'` | The local storage key used to persist the selected theme. |
+| `lightLabel` / `light-label` | `string` | `'Switch to light theme'` | The accessible label for switching to the light theme. |
+| `darkLabel` / `dark-label` | `string` | `'Switch to dark theme'` | The accessible label for switching to the dark theme. |
+| `iconMode` / `icon-mode` | `'target' \| 'current'` | `'target'` | Controls whether the displayed icon represents the target theme or the current theme. |
+| `disabled` | `boolean` | `false` | Disables the theme toggle. |
+
+All properties are reflected through their corresponding HTML attributes. When only one name is listed, the property and attribute share the same name.
 
 ### Slots
 
@@ -152,7 +153,7 @@ To display the icon for the currently active theme instead, set `icon-mode` to `
 | `icon-light` | Custom icon representing the light theme. |
 | `icon-dark` | Custom icon representing the dark theme. |
 
-### CSS Parts
+### CSS parts
 
 | Name | Description |
 | ---- | ----------- |
@@ -161,7 +162,7 @@ To display the icon for the currently active theme instead, set `icon-mode` to `
 | `icon--light` | The light theme icon. |
 | `icon--dark` | The dark theme icon. |
 
-### CSS Custom Properties
+### CSS custom properties
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
@@ -253,6 +254,24 @@ Create a production build by running the following command.
 
 ```sh
 npm run build
+```
+
+### Git hooks
+
+This repository includes a pre-commit hook that runs linting and formatting checks before each commit.
+
+To enable the hook, run the following command from the repository root:
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+This configuration only needs to be applied once per clone and does not affect other repositories.
+
+To disable the hook, run:
+
+```sh
+git config --local --unset core.hooksPath
 ```
 
 ## License

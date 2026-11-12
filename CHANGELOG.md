@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-12
+
+### Fixed
+
+- Corrected the default tag name in the generated Custom Elements Manifest.
+
+### Changed
+
+- Updated the build process to reuse the main module in the auto-defined entry point instead of creating a separate bundle.
+
+### Documentation
+
+- Simplified JSDoc annotations by removing redundant attribute, property, and method declarations already handled by the Custom Elements Manifest analyzer.
+
 ## [2.0.0] - 2026-08-29
 
 ### Changed
@@ -33,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic synchronization between multiple `<theme-toggle>` instances in the same document.
 - Automatic updates when the system color preference changes while following the system theme.
 
-[Unreleased]: https://github.com/georapbox/theme-toggle/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/georapbox/theme-toggle/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/georapbox/theme-toggle/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/georapbox/theme-toggle/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/georapbox/theme-toggle/releases/tag/v1.0.0
