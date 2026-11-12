@@ -190,9 +190,9 @@ All properties are reflected through their corresponding HTML attributes. When o
 
 ### Events
 
-| Name | Description | Event Detail |
-| ---- | ----------- | ------------ |
-| `theme-change` | Dispatched when the theme is changed by user interaction. The event detail contains the theme preference and resolved theme. | `{theme: 'light' \| 'dark' \| 'system', resolvedTheme: 'light' \| 'dark'}` |
+| Name | Type | Description | Event Detail |
+| ---- | ---- | ----------- | ------------ |
+| `theme-change` | CustomEvent | Dispatched when the theme is changed by user interaction. The event detail contains the theme preference and resolved theme. | `{theme: 'light' \| 'dark' \| 'system', resolvedTheme: 'light' \| 'dark'}` |
 
 The `theme` value represents the current theme preference, while `resolvedTheme` represents the effective light or dark theme.
 
