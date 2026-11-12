@@ -181,26 +181,12 @@ template.innerHTML = html`
 `;
 
 /**
- * @summary A custom element for toggling between light and dark color themes while following the system preference by default.
+ * A custom element for toggling between light and dark color themes while following the system preference by default.
  *
  * @documentation https://github.com/georapbox/theme-toggle
  *
- * @tagname theme-toggle - The default custom element tag name, unless overridden by the `define` method.
+ * @tagname theme-toggle
  * @extends HTMLElement
- *
- * @property {boolean} noStorage - Whether to disable persistence of the selected theme.
- * @property {string} storageKey - The local storage key used to persist the selected theme.
- * @property {string} lightLabel - The accessible label for switching to the light theme.
- * @property {string} darkLabel - The accessible label for switching to the dark theme.
- * @property {IconMode} iconMode - Whether the displayed icon represents the target or current theme.
- * @property {boolean} disabled - Whether the toggle button is disabled.
- *
- * @attribute {boolean} no-storage - Whether to disable persistence of the selected theme.
- * @attribute {string} storage-key - The local storage key used to persist the selected theme.
- * @attribute {string} light-label - The accessible label for switching to the light theme.
- * @attribute {string} dark-label - The accessible label for switching to the dark theme.
- * @attribute {IconMode} icon-mode - Whether the displayed icon represents the target or current theme.
- * @attribute {boolean} disabled - Whether the toggle button is disabled.
  *
  * @slot icon-light - Custom icon representing the light theme.
  * @slot icon-dark - Custom icon representing the dark theme.
@@ -224,8 +210,6 @@ template.innerHTML = html`
  * @cssproperty --theme-toggle-focus-ring-offset - The offset of the focus ring from the toggle button.
  *
  * @event theme-change - Dispatched when the theme is changed by user interaction. The event detail contains the theme preference and resolved theme.
- *
- * @method define - Static method. Defines the custom element by registering it with the browser's CustomElementRegistry if it hasn't been defined already.
  */
 class ThemeToggle extends HTMLElement {
   /** @type {ThemePreference} */
@@ -281,14 +265,15 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
-   * Whether to disable persistence of the selected theme in local storage.
+   * Disables persistence of the selected theme in local storage.
    *
    * When enabled, theme changes are applied only for the current session and
    * are not saved for future page loads.
    *
    * @type {boolean}
-   * @default false
    * @attribute no-storage
+   * @reflect
+   * @default false
    */
   get noStorage() {
     return this.hasAttribute('no-storage');
@@ -304,8 +289,9 @@ class ThemeToggle extends HTMLElement {
    * This value is ignored when `no-storage` is enabled.
    *
    * @type {string}
-   * @default 'theme-toggle/theme-preference'
    * @attribute storage-key
+   * @reflect
+   * @default 'theme-toggle/theme-preference'
    */
   get storageKey() {
     return this.getAttribute('storage-key') || 'theme-toggle/theme-preference';
@@ -323,8 +309,9 @@ class ThemeToggle extends HTMLElement {
    * The accessible label for switching to the light theme.
    *
    * @type {string}
-   * @default 'Switch to light theme'
    * @attribute light-label
+   * @reflect
+   * @default 'Switch to light theme'
    */
   get lightLabel() {
     return this.getAttribute('light-label') ?? 'Switch to light theme';
@@ -342,8 +329,9 @@ class ThemeToggle extends HTMLElement {
    * The accessible label for switching to the dark theme.
    *
    * @type {string}
-   * @default 'Switch to dark theme'
    * @attribute dark-label
+   * @reflect
+   * @default 'Switch to dark theme'
    */
   get darkLabel() {
     return this.getAttribute('dark-label') ?? 'Switch to dark theme';
@@ -358,11 +346,12 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
-   * Whether the displayed icon represents the target or current theme.
+   * Controls whether the displayed icon represents the target theme or the current theme.
    *
    * @type {IconMode}
-   * @default 'target'
    * @attribute icon-mode
+   * @reflect
+   * @default 'target'
    */
   get iconMode() {
     return this.getAttribute('icon-mode') === 'current' ? 'current' : 'target';
@@ -377,11 +366,12 @@ class ThemeToggle extends HTMLElement {
   }
 
   /**
-   * Whether the toggle button is disabled.
+   * Disables the theme toggle.
    *
    * @type {boolean}
-   * @default false
    * @attribute disabled
+   * @reflect
+   * @default false
    */
   get disabled() {
     return this.hasAttribute('disabled');
@@ -659,7 +649,7 @@ class ThemeToggle extends HTMLElement {
   #upgradeProperty(prop) {
     const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);
 
-    if (Object.prototype.hasOwnProperty.call(instance, prop)) {
+    if (Object.hasOwn(instance, prop)) {
       const value = instance[prop];
       delete instance[prop];
       instance[prop] = value;
@@ -670,13 +660,16 @@ class ThemeToggle extends HTMLElement {
    * Defines the custom element by registering it with the browser's
    * CustomElementRegistry if it hasn't been defined already.
    *
-   * @param {string} [tagName='theme-toggle'] - The tag name to use for the custom element. Must include a hyphen.
+   * @param {string} [tagName='theme-toggle'] - The tag name to use for the custom element.
    */
   static define(tagName = 'theme-toggle') {
-    if (typeof window === 'undefined' || window.customElements.get(tagName)) {
+    const registry = globalThis.customElements;
+
+    if (!registry || registry.get(tagName)) {
       return;
     }
-    window.customElements.define(tagName, ThemeToggle);
+
+    registry.define(tagName, ThemeToggle);
   }
 }
 
