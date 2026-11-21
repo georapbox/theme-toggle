@@ -1,8 +1,8 @@
 import '../lib/browser-window.js';
 
-const url = window.location.href;
-const isLocalhost = url.includes('127.0.0.1') || url.includes('localhost');
-const componentUrl = isLocalhost ? '../../dist/theme-toggle.js' : '../lib/theme-toggle.js';
+const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+const basePath = isLocal ? '../..' : '..';
+const componentUrl = `${basePath}/dist/theme-toggle.js`;
 
 const { ThemeToggle } = await import(componentUrl);
 ThemeToggle.define();
