@@ -2,8 +2,8 @@
 [![npm license](https://img.shields.io/npm/l/@georapbox/theme-toggle.svg)](https://www.npmjs.com/package/@georapbox/theme-toggle)
 
 [demo]: https://georapbox.github.io/theme-toggle/
-[license]: https://github.com/georapbox/theme-toggle/blob/main/LICENSE
-[changelog]: https://github.com/georapbox/theme-toggle/blob/main/CHANGELOG.md
+[license]: ./LICENSE
+[changelog]: ./CHANGELOG.md
 
 # &lt;theme-toggle&gt;
 
