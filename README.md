@@ -14,7 +14,7 @@ A custom element for toggling between light and dark color themes while followin
 ## Installation
 
 ```sh
-npm install --save @georapbox/theme-toggle
+npm install @georapbox/theme-toggle
 ```
 
 ## Registration
@@ -241,7 +241,13 @@ npm run lint
 
 ### Testing
 
-Run the tests by running any of the following commands.
+The tests use Playwright to run in real browsers. Install the required browser binaries if they are not already installed:
+
+```sh
+npx playwright install
+```
+
+Run the tests using any of the following commands:
 
 ```sh
 npm test
